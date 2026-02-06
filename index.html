@@ -3,64 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You </title>
+    <title>For You ❤️</title>
     <style>
-        body { margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #fff0f3; font-family: 'Arial', sans-serif; overflow: hidden; }
-        h1 { font-size: clamp(3rem, 10vw, 5rem); color: #ff4d6d; text-align: center; margin-bottom: 50px; }
-        .container { position: relative; width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; }
-        #yesBtn { background-color: #43aa8b; color: white; padding: 20px 40px; border: none; border-radius: 50px; font-size: 1.5rem; cursor: pointer; transition: transform 0.3s ease; z-index: 10; }
-        #noBtn { background-color: #f94144; color: white; padding: 15px 30px; border: none; border-radius: 50px; font-size: 1.2rem; cursor: pointer; position: fixed; transition: all 0.2s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: linear-gradient(135deg, #fce4ec 0%, #fee1e8 100%);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            overflow: hidden; 
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 90%;
+        }
+
+        h1 { 
+            font-size: clamp(2rem, 8vw, 4rem); 
+            color: #ff4d6d; 
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .btn-container { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 15px 35px;
+            border-radius: 15px;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #yesBtn { 
+            background-color: #43aa8b; 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(67, 170, 139, 0.3);
+        }
+
+        #noBtn { 
+            background-color: #ff4d6d; 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+            /* Starting position is static/normal */
+        }
+
+        .success-content {
+            animation: heartBeat 1.5s infinite;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
-    <h1>I AM SORRY</h1>
-
-    <div class="container">
-        <button id="yesBtn">Alright maybe</button>
-        <button id="noBtn">No</button>
+    <div class="card" id="mainCard">
+        <h1>I AM SORRY</h1>
+        <div class="btn-container">
+            <button id="yesBtn">Alright maybe</button>
+            <button id="noBtn">No</button>
+        </div>
     </div>
 
     <script>
-        // OPTIONAL: If you want a silent "Read Receipt", paste a Webhook URL below. 
-        // Otherwise, you can just delete this function.
-        const NOTIFY_URL = ""; 
-
-        window.onload = () => {
-            if(NOTIFY_URL) fetch(NOTIFY_URL, { method: 'POST', body: JSON.stringify({ msg: "Site opened" })});
-        };
-
         let noCount = 0;
         let yesScale = 1;
         let noScale = 1;
 
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
+        const card = document.getElementById('mainCard');
 
         noBtn.addEventListener('click', () => {
             noCount++;
-            
+
             if (noCount >= 5) {
                 noBtn.style.display = 'none';
             } else {
-                // Shrink 'No' and Grow 'Yes'
-                noScale -= 0.18;
-                yesScale += 0.6;
+                // Change to fixed so it can fly anywhere on the screen
+                noBtn.style.position = 'fixed';
+
+                // Scale adjustments
+                noScale -= 0.15;
+                yesScale += 0.8; 
+                
                 noBtn.style.transform = `scale(${noScale})`;
                 yesBtn.style.transform = `scale(${yesScale})`;
 
-                // Move 'No' to a random spot
-                const x = Math.random() * (window.innerWidth - 150);
-                const y = Math.random() * (window.innerHeight - 100);
-                noBtn.style.left = `${x}px`;
-                noBtn.style.top = `${y}px`;
+                // Random teleportation
+                const x = Math.random() * (window.innerWidth - 120);
+                const y = Math.random() * (window.innerHeight - 60);
+
+                noBtn.style.left = x + 'px';
+                noBtn.style.top = y + 'px';
             }
         });
 
         yesBtn.addEventListener('click', () => {
-            document.body.innerHTML = `
-                <h1 style="font-size: 4rem;">❤️</h1>
-                <h2 style="color: #ff4d6d; text-align: center;">I knew you'd give me a chance. <br> I'll make it up to you!</h2>
+            card.innerHTML = `
+                <div class="success-content">
+                    <h1 style="font-size: 5rem;">❤️</h1>
+                    <h2 style="color: #ff4d6d; margin-top: 10px;">Yay! I love you!</h2>
+                    <p style="color: #888; margin-top: 15px;">I'll make it up to you, I promise.</p>
+                </div>
             `;
         });
     </script>
