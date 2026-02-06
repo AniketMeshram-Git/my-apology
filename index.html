@@ -3,78 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You ❤️</title>
+    <title>For You </title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body { 
             height: 100vh; 
             display: flex; 
-            flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             background: linear-gradient(135deg, #fce4ec 0%, #fee1e8 100%);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
             overflow: hidden; 
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 3rem;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 60px;
+            width: 550px; /* Big, bold card */
+            min-height: 450px;
+            border-radius: 40px;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.5);
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            max-width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 1;
         }
 
         h1 { 
-            font-size: clamp(2rem, 8vw, 4rem); 
+            font-size: 3.5rem; 
             color: #ff4d6d; 
-            margin-bottom: 2rem;
-            letter-spacing: -1px;
+            margin-bottom: 40px;
+            pointer-events: none;
         }
 
         .btn-container { 
             display: flex; 
-            gap: 20px; 
+            gap: 25px; 
             justify-content: center; 
             align-items: center;
-            min-height: 100px;
         }
 
         button {
-            padding: 15px 35px;
-            border-radius: 15px;
+            padding: 18px 45px;
+            border-radius: 20px;
             border: none;
-            font-weight: 600;
-            font-size: 1.1rem;
+            font-weight: bold;
+            font-size: 1.3rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         #yesBtn { 
             background-color: #43aa8b; 
             color: white; 
             box-shadow: 0 4px 15px rgba(67, 170, 139, 0.3);
+            z-index: 1000;
         }
 
         #noBtn { 
             background-color: #ff4d6d; 
             color: white; 
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
-            /* Starting position is static/normal */
-        }
-
-        .success-content {
-            animation: heartBeat 1.5s infinite;
-        }
-
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            position: relative;
+            /* This makes it slide smoothly instead of teleporting */
+            transition: all 0.4s ease-out; 
+            z-index: 999;
         }
     </style>
 </head>
@@ -90,45 +87,45 @@
 
     <script>
         let noCount = 0;
-        let yesScale = 1;
-        let noScale = 1;
-
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         const card = document.getElementById('mainCard');
 
-        noBtn.addEventListener('click', () => {
+        // This makes the button run away when the mouse even gets CLOSE
+        // It makes it much harder to click!
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', moveButton);
+
+        function moveButton() {
             noCount++;
 
             if (noCount >= 5) {
                 noBtn.style.display = 'none';
             } else {
-                // Change to fixed so it can fly anywhere on the screen
                 noBtn.style.position = 'fixed';
 
-                // Scale adjustments
-                noScale -= 0.15;
-                yesScale += 0.8; 
+                // Grow the Yes button, shrink the No button
+                const yesScale = 1 + (noCount * 0.6);
+                const noScale = 1 - (noCount * 0.12);
                 
                 noBtn.style.transform = `scale(${noScale})`;
                 yesBtn.style.transform = `scale(${yesScale})`;
 
-                // Random teleportation
-                const x = Math.random() * (window.innerWidth - 120);
-                const y = Math.random() * (window.innerHeight - 60);
+                // Calculate random position
+                const padding = 100;
+                const x = Math.random() * (window.innerWidth - padding * 2) + padding;
+                const y = Math.random() * (window.innerHeight - padding * 2) + padding;
 
                 noBtn.style.left = x + 'px';
                 noBtn.style.top = y + 'px';
             }
-        });
+        }
 
         yesBtn.addEventListener('click', () => {
             card.innerHTML = `
-                <div class="success-content">
-                    <h1 style="font-size: 5rem;">❤️</h1>
-                    <h2 style="color: #ff4d6d; margin-top: 10px;">Yay! I love you!</h2>
-                    <p style="color: #888; margin-top: 15px;">I'll make it up to you, I promise.</p>
-                </div>
+                <h1 style="font-size: 5rem;">❤️</h1>
+                <h2 style="color: #ff4d6d;">Yay!Thank you so much; You are the Best!</h2>
+                <p style="color: #888; margin-top: 15px;">I promise to make it up to you.</p>
             `;
         });
     </script>
