@@ -19,22 +19,32 @@
             overflow: hidden; 
         }
 
+        /* Wrap GIF and Text to keep them ON TOP of buttons */
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 100; /* Higher than buttons */
+            pointer-events: none; /* Allows clicking buttons through empty space */
+        }
+
         #main-gif {
-            width: 250px;
-            height: 250px;
+            width: 200px;
+            height: 200px;
             object-fit: contain;
             margin-bottom: 20px;
             border-radius: 20px;
-            z-index: 5; /* Lower than buttons */
         }
 
         h1 { 
-            font-size: clamp(2rem, 8vw, 3.5rem); 
+            font-size: clamp(1.8rem, 7vw, 3rem); 
             color: #ff4d6d; 
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             text-align: center;
-            padding: 0 15px;
-            z-index: 5;
+            padding: 0 20px;
+            background: rgba(255, 240, 243, 0.8); /* Optional: faint bg to keep text legible */
+            border-radius: 10px;
         }
 
         .btn-container { 
@@ -43,29 +53,33 @@
             justify-content: center; 
             align-items: center;
             width: 100%;
-            z-index: 10;
+            position: relative;
+            z-index: 10; /* Lower than text */
         }
 
         button {
-            padding: 15px 35px;
+            padding: 15px 30px;
             border-radius: 50px;
             border: none;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             -webkit-tap-highlight-color: transparent;
+            pointer-events: auto; /* Ensures buttons remain clickable */
         }
 
-        #yesBtn { background-color: #43aa8b; color: white; transition: transform 0.3s; z-index: 20; }
-        #noBtn { background-color: #ff4d6d; color: white; transition: all 0.3s ease-out; z-index: 20; }
+        #yesBtn { background-color: #43aa8b; color: white; transition: transform 0.3s; }
+        #noBtn { background-color: #ff4d6d; color: white; transition: all 0.3s ease-out; }
 
     </style>
 </head>
 <body>
 
-    <img id="neutral.gif" src="neutral.gif" alt="Character">
-    <h1 id="heading">I AM SORRY</h1>
+    <div class="content-wrapper">
+        <img id="main-gif" src="neutral.gif" alt="Character">
+        <h1 id="heading">I AM SORRY</h1>
+    </div>
 
     <div class="btn-container">
         <button id="yesBtn">Alright maybe</button>
@@ -79,8 +93,9 @@
         const mainGif = document.getElementById('main-gif');
         const heading = document.getElementById('heading');
 
+        // Ensure these match your GitHub filenames exactly (case sensitive!)
         const sadGifs = ["sad1.gif", "sad2.gif", "sad3.gif", "sad4.gif"];
-        const messages = ["I AM SORRY", "Please? 🥺", "I promise I'll change...", "I'll be good!", "Last chance!"];
+        const messages = ["I AM SORRY", "Please? 🥺", "Don't be like that...", "I'll be good!", "Last chance!"];
 
         function handleNo() {
             if (noCount < sadGifs.length) {
@@ -94,40 +109,21 @@
                 heading.innerText = "Please say yes... 😭";
             } else {
                 noBtn.style.position = 'fixed';
-                heading.innerText = messages[noCount];
+                heading.innerText = messages[noCount] || "Please? 🥺";
 
-                // Scale Yes up, No down
-                yesBtn.style.transform = `scale(${1 + noCount * 0.7})`;
-                noBtn.style.transform = `scale(${1 - noCount * 0.12})`;
+                // Scale Logic (Lowered slightly for mobile safety)
+                yesBtn.style.transform = `scale(${1 + noCount * 0.6})`;
+                noBtn.style.transform = `scale(${1 - noCount * 0.15})`;
 
                 moveNoButton();
             }
         }
 
         function moveNoButton() {
-            const gifRect = mainGif.getBoundingClientRect();
-            const padding = 20; // Extra space around GIF
-            let x, y;
-            let isOnGif = true;
-
-            // Loop until we find a spot that is NOT over the GIF or Heading
-            while (isOnGif) {
-                x = Math.random() * (window.innerWidth - 120) + 60;
-                y = Math.random() * (window.innerHeight - 60) + 30;
-
-                // Check if the random X/Y coordinates fall inside the GIF's area
-                const isOverlappingGif = (
-                    x > gifRect.left - padding && 
-                    x < gifRect.right + padding && 
-                    y > gifRect.top - padding && 
-                    y < gifRect.bottom + padding
-                );
-
-                if (!isOverlappingGif) {
-                    isOnGif = false;
-                }
-            }
-
+            // Avoid the middle of the screen where the text and GIF are
+            const x = Math.random() * (window.innerWidth - 120) + 60;
+            const y = Math.random() * (window.innerHeight - 100) + 50;
+            
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
         }
@@ -139,10 +135,12 @@
 
         yesBtn.addEventListener('click', () => {
             document.body.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center;">
-                    <img src="happy.gif" style="width:300px; border-radius:20px;">
-                    <h1 style="font-size: 2.5rem; margin-top: 20px; color: #ff4d6d;">Thank you so Much! You are the best ❤️</h1>
-                    <h2 style="font-size: 1.5rem; margin-top: 20px; color: #555;">I promise I'll make to to you!</h2>
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; padding: 20px;">
+                    <img src="happy.gif" style="width:250px; border-radius:20px;">
+                    <h1 style="font-size: 2.5rem; margin-top: 20px; color: #ff4d6d;">I love you! ❤️</h1>
+                    <h2 style="font-size: 1.5rem; color: #555; margin-top: 10px; font-weight: normal;">
+                        I promise I'll make it up to you
+                    </h2>
                 </div>
             `;
         });
